@@ -3,9 +3,18 @@ const cors = require('cors');
 const NodeCache = require('node-cache');
 const axios = require('axios');
 const path = require('path');
+const cloudinary = require('cloudinary').v2;
+require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Cloudinary 설정
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
 
 // 미들웨어
 app.use(cors());
@@ -161,7 +170,7 @@ async function getPlaceImageFromGoogle(restaurantName, location) {
       
       if (isRestaurantMatch) {
         const placeId = firstResult.place_id;
-        return await getPhotoFromPlaceId(placeId, cacheKey);
+        return await getPhotoFromPlaceId(placeId, cacheKey, restaurantName);
       }
     }
 
@@ -174,7 +183,7 @@ async function getPlaceImageFromGoogle(restaurantName, location) {
         .replace('단수이 야시장', 'Tamsui')
         .replace('야시장', '');
     }
-    
+
     // 노점 번호 등 상세 정보 제거
     cleanLocation = cleanLocation.replace(/\d+번\s*노점/g, '')
                                   .replace(/초입\s*\d+번\s*노점/g, '')
@@ -182,7 +191,7 @@ async function getPlaceImageFromGoogle(restaurantName, location) {
                                   .replace(/\d+번\s*부근/g, '')
                                   .replace(/타이베이\s*/g, '')
                                   .trim();
-    
+
     if (cleanLocation) {
       searchQuery = `${restaurantName} ${cleanLocation} Taipei Taiwan`.trim();
       searchParams = {
@@ -196,14 +205,14 @@ async function getPlaceImageFromGoogle(restaurantName, location) {
 
       if (searchData.status === 'OK' && searchData.results && searchData.results.length > 0) {
         const placeId = searchData.results[0].place_id;
-        return await getPhotoFromPlaceId(placeId, cacheKey);
+        return await getPhotoFromPlaceId(placeId, cacheKey, restaurantName);
       }
     }
 
     // 3순위: 첫 번째 검색 결과 사용 (맛집 이름만으로 검색한 결과)
     if (searchData.status === 'OK' && searchData.results && searchData.results.length > 0) {
       const placeId = searchData.results[0].place_id;
-      return await getPhotoFromPlaceId(placeId, cacheKey);
+      return await getPhotoFromPlaceId(placeId, cacheKey, restaurantName);
     }
 
     return null;
@@ -214,8 +223,36 @@ async function getPlaceImageFromGoogle(restaurantName, location) {
   }
 }
 
+// Google 이미지를 Cloudinary에 업로드
+async function uploadToCloudinary(googlePhotoUrl, restaurantName) {
+  try {
+    // 한글 이름을 영문/숫자로 변환하여 public_id 생성
+    const sanitizedName = restaurantName
+      .replace(/[^a-zA-Z0-9가-힣]/g, '_')
+      .substring(0, 50);
+    const publicId = `taiwan_food/${sanitizedName}_${Date.now()}`;
+
+    // Google 이미지를 Cloudinary에 업로드
+    const result = await cloudinary.uploader.upload(googlePhotoUrl, {
+      public_id: publicId,
+      folder: 'taiwan_food',
+      overwrite: true,
+      resource_type: 'image',
+      transformation: [
+        { width: 400, height: 300, crop: 'fill', quality: 'auto' }
+      ]
+    });
+
+    console.log(`Cloudinary 업로드 성공: ${restaurantName} -> ${result.secure_url}`);
+    return result.secure_url;
+  } catch (error) {
+    console.error(`Cloudinary 업로드 실패 (${restaurantName}):`, error.message);
+    return null;
+  }
+}
+
 // Place ID로부터 사진 가져오기 (별도 함수로 분리)
-async function getPhotoFromPlaceId(placeId, cacheKey) {
+async function getPhotoFromPlaceId(placeId, cacheKey, restaurantName) {
   try {
 
     // Place Details로 photos 정보 가져오기
@@ -247,13 +284,21 @@ async function getPhotoFromPlaceId(placeId, cacheKey) {
       return null;
     }
 
-    // Photo URL 생성
-    const photoUrl = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference=${photoReference}&key=${GOOGLE_PLACES_API_KEY}`;
+    // Google Photo URL 생성
+    const googlePhotoUrl = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference=${photoReference}&key=${GOOGLE_PLACES_API_KEY}`;
 
-    // 캐시에 저장
-    imageCache.set(cacheKey, photoUrl);
+    // Cloudinary에 업로드
+    const cloudinaryUrl = await uploadToCloudinary(googlePhotoUrl, restaurantName);
 
-    return photoUrl;
+    if (cloudinaryUrl) {
+      // Cloudinary URL을 캐시에 저장
+      imageCache.set(cacheKey, cloudinaryUrl);
+      return cloudinaryUrl;
+    }
+
+    // Cloudinary 업로드 실패 시 Google URL 반환
+    imageCache.set(cacheKey, googlePhotoUrl);
+    return googlePhotoUrl;
 
   } catch (error) {
     console.error(`사진 가져오기 실패 (place_id: ${placeId}):`, error.message);
