@@ -1,0 +1,9 @@
+node_modules/
+npm-debug.log
+.DS_Store
+.env
+package-lock.json
+*.app/
+start-server.command
+public/app-old.js
+무제 폴더/

@@ -1,0 +1,47 @@
+{
+    "name": "대만맛집정보",
+    "short_name": "대만맛집",
+    "description": "대만 여행 필수! 맛집, 야시장, 관광지 정보를 한눈에",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#1a1a2e",
+    "theme_color": "#FF6B6B",
+    "orientation": "portrait",
+    "scope": "/",
+    "lang": "ko",
+    "icons": [
+        {
+            "src": "/favicon.svg",
+            "sizes": "any",
+            "type": "image/svg+xml",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/icons/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/icons/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "categories": ["food", "travel", "lifestyle"],
+    "shortcuts": [
+        {
+            "name": "야시장 맛집",
+            "short_name": "야시장",
+            "description": "야시장별 맛집 보기",
+            "url": "/?tab=market"
+        },
+        {
+            "name": "도심투어",
+            "short_name": "투어",
+            "description": "도심 투어 맛집 보기",
+            "url": "/?tab=tour"
+        }
+    ]
+}

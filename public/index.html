@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>대만맛집정보</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="apple-touch-icon" href="/icons/icon-192.png">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#FF6B6B">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- 전역 로딩 오버레이 -->
+    <div id="globalLoadingOverlay" class="loading-overlay" style="display: none;">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <div class="loading-text">조회중...</div>
+        </div>
+    </div>
+
+    <!-- Pull-to-Refresh 인디케이터 -->
+    <div id="pullToRefreshIndicator" class="pull-to-refresh-indicator">
+        <i class="bi bi-arrow-down-circle pull-to-refresh-icon"></i>
+        <span class="pull-to-refresh-text">당겨서 새로고침</span>
+    </div>
+
+    <div class="app-container">
+        <!-- 상단 헤더 -->
+        <header class="app-header">
+            <h1>🍜 대만맛집정보</h1>
+        </header>
+
+        <!-- 메인 콘텐츠 영역 -->
+        <main class="main-content" id="mainContent">
+            <!-- 홈 화면 -->
+            <section class="home-section active" id="homeSection">
+                <!-- 카테고리 퀵 버튼 -->
+                <div class="quick-categories">
+                    <button class="quick-btn" data-category="전체">
+                        <span class="quick-icon">🍽️</span>
+                        <span class="quick-label">전체</span>
+                    </button>
+                    <button class="quick-btn" data-category="면류">
+                        <span class="quick-icon">🍜</span>
+                        <span class="quick-label">면류</span>
+                    </button>
+                    <button class="quick-btn" data-category="만두">
+                        <span class="quick-icon">🥟</span>
+                        <span class="quick-label">만두</span>
+                    </button>
+                    <button class="quick-btn" data-category="디저트">
+                        <span class="quick-icon">🍧</span>
+                        <span class="quick-label">디저트</span>
+                    </button>
+                    <button class="quick-btn" data-category="길거리음식">
+                        <span class="quick-icon">🍢</span>
+                        <span class="quick-label">길거리</span>
+                    </button>
+                </div>
+
+                <!-- 추천 섹션 -->
+                <div class="section-title">
+                    <h2>🔥 인기 맛집</h2>
+                </div>
+                <div class="card-scroll-container" id="popularContainer">
+                    <!-- 인기 맛집 카드들이 동적으로 추가됨 -->
+                </div>
+
+                <!-- 야시장 섹션 -->
+                <div class="section-title">
+                    <h2>🌙 야시장별 맛집</h2>
+                </div>
+                <div class="market-chips">
+                    <button class="market-chip active" data-market="전체">전체</button>
+                    <button class="market-chip" data-market="스린 야시장">스린</button>
+                    <button class="market-chip" data-market="닝샤 야시장">닝샤</button>
+                    <button class="market-chip" data-market="펑자 야시장">펑자</button>
+                    <button class="market-chip" data-market="단수이 야시장">단수이</button>
+                </div>
+                <div class="card-list" id="marketContainer">
+                    <!-- 야시장 맛집 카드들이 동적으로 추가됨 -->
+                </div>
+            </section>
+
+            <!-- 검색 결과 화면 -->
+            <section class="search-section" id="searchSection" style="display: none;">
+                <div class="search-header">
+                    <button class="back-btn" id="backBtn">
+                        <i class="bi bi-arrow-left"></i>
+                    </button>
+                    <h2 id="searchTitle">검색 결과</h2>
+                </div>
+                <div class="card-list" id="searchResultsContainer">
+                    <!-- 검색 결과 카드들이 동적으로 추가됨 -->
+                </div>
+            </section>
+
+            <!-- 상세 보기 화면 -->
+            <section class="detail-section" id="detailSection" style="display: none;">
+                <div class="detail-header">
+                    <button class="back-btn" id="detailBackBtn">
+                        <i class="bi bi-arrow-left"></i>
+                    </button>
+                    <h2 id="detailTitle">상세 정보</h2>
+                </div>
+                <div class="detail-content" id="detailContent">
+                    <!-- 상세 정보가 동적으로 추가됨 -->
+                </div>
+            </section>
+        </main>
+
+        <!-- 하단 네비게이션 바 -->
+        <nav class="bottom-nav">
+            <button class="nav-item active" data-tab="home">
+                <i class="bi bi-house-fill"></i>
+                <span>홈</span>
+            </button>
+            <button class="nav-item" data-tab="category">
+                <i class="bi bi-grid-fill"></i>
+                <span>카테고리</span>
+            </button>
+            <button class="nav-item" data-tab="market">
+                <i class="bi bi-shop"></i>
+                <span>야시장</span>
+            </button>
+            <button class="nav-item" data-tab="tour">
+                <i class="bi bi-geo-alt-fill"></i>
+                <span>도심투어</span>
+            </button>
+            <button class="nav-item" data-tab="places">
+                <i class="bi bi-star-fill"></i>
+                <span>명소</span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- 카테고리 모달 -->
+    <div class="modal-overlay" id="categoryModal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>카테고리 선택</h3>
+                <button class="modal-close" id="closeCategoryModal">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <button class="modal-option" data-category="전체">🍽️ 전체</button>
+                <button class="modal-option" data-category="면류">🍜 면류</button>
+                <button class="modal-option" data-category="밥류">🍚 밥류</button>
+                <button class="modal-option" data-category="만두">🥟 만두</button>
+                <button class="modal-option" data-category="디저트">🍧 디저트</button>
+                <button class="modal-option" data-category="길거리음식">🍢 길거리음식</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 야시장 모달 -->
+    <div class="modal-overlay" id="marketModal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>야시장 선택</h3>
+                <button class="modal-close" id="closeMarketModal">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <button class="modal-option" data-market="전체">🌙 전체</button>
+                <button class="modal-option" data-market="스린 야시장">🏮 스린 야시장</button>
+                <button class="modal-option" data-market="닝샤 야시장">🏮 닝샤 야시장</button>
+                <button class="modal-option" data-market="펑자 야시장">🏮 펑자 야시장</button>
+                <button class="modal-option" data-market="단수이 야시장">🏮 단수이 야시장</button>
+                <button class="modal-option" data-market="라오허제 야시장">🏮 라오허제 야시장</button>
+                <button class="modal-option" data-market="난지창 야시장">🏮 난지창 야시장</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 도심투어 모달 -->
+    <div class="modal-overlay" id="tourModal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>도심투어 지역</h3>
+                <button class="modal-close" id="closeTourModal">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <button class="modal-option" data-tour="전체">🏙️ 전체</button>
+                <button class="modal-option" data-tour="시먼딩">🛍️ 시먼딩</button>
+                <button class="modal-option" data-tour="융캉제">☕ 융캉제</button>
+                <button class="modal-option" data-tour="중산카페거리">🍰 중산카페거리</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

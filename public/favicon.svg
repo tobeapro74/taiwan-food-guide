@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- 배경 원 -->
+  <circle cx="50" cy="50" r="48" fill="#FF6B6B" stroke="#FF5252" stroke-width="2"/>
+  
+  <!-- 그릇 모양 -->
+  <path d="M 25 45 Q 25 35 35 35 L 65 35 Q 75 35 75 45 L 75 60 Q 75 70 65 70 L 35 70 Q 25 70 25 60 Z" fill="#FFFFFF" opacity="0.9"/>
+  
+  <!-- 면/국수 모양 -->
+  <path d="M 30 50 Q 40 45 50 50 Q 60 55 70 50" stroke="#FFB74D" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M 30 55 Q 40 50 50 55 Q 60 60 70 55" stroke="#FFB74D" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M 30 60 Q 40 55 50 60 Q 60 65 70 60" stroke="#FFB74D" stroke-width="3" fill="none" stroke-linecap="round"/>
+  
+  <!-- 증기 효과 -->
+  <circle cx="40" cy="30" r="3" fill="#FFFFFF" opacity="0.6"/>
+  <circle cx="50" cy="28" r="2.5" fill="#FFFFFF" opacity="0.6"/>
+  <circle cx="60" cy="30" r="3" fill="#FFFFFF" opacity="0.6"/>
+</svg>
+
