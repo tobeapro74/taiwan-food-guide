@@ -606,6 +606,7 @@ body {
     max-height: 70vh;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
     background: var(--card-bg);
     border-radius: var(--border-radius) var(--border-radius) 0 0;
     padding-bottom: calc(16px + var(--safe-area-inset-bottom));
@@ -660,6 +661,7 @@ body {
     padding: 16px 20px;
     overflow-y: auto;
     flex: 1;
+    min-height: 0;
     -webkit-overflow-scrolling: touch;
 }
 
