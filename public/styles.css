@@ -603,6 +603,9 @@ body {
 .modal-content {
     width: 100%;
     max-width: 500px;
+    max-height: 70vh;
+    display: flex;
+    flex-direction: column;
     background: var(--card-bg);
     border-radius: var(--border-radius) var(--border-radius) 0 0;
     padding-bottom: calc(16px + var(--safe-area-inset-bottom));
@@ -655,6 +658,9 @@ body {
     flex-direction: column;
     gap: 8px;
     padding: 16px 20px;
+    overflow-y: auto;
+    flex: 1;
+    -webkit-overflow-scrolling: touch;
 }
 
 .modal-option {
