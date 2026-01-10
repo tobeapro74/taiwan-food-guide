@@ -39,6 +39,21 @@
         <main class="main-content" id="mainContent">
             <!-- 홈 화면 -->
             <section class="home-section active" id="homeSection">
+                <!-- 검색바 -->
+                <div class="search-bar-container">
+                    <div class="search-input-wrapper">
+                        <i class="bi bi-search search-icon"></i>
+                        <input type="text"
+                               id="searchInput"
+                               class="search-input"
+                               placeholder="식당, 음식, 야시장, 지역 검색..."
+                               autocomplete="off">
+                        <button class="search-clear-btn" id="searchClearBtn" style="display: none;">
+                            <i class="bi bi-x-circle-fill"></i>
+                        </button>
+                    </div>
+                </div>
+
                 <!-- 카테고리 퀵 버튼 -->
                 <div class="quick-categories">
                     <button class="quick-btn" data-category="전체">

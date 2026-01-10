@@ -44,6 +44,10 @@
         backBtn: document.getElementById('backBtn'),
         detailBackBtn: document.getElementById('detailBackBtn'),
 
+        // 검색
+        searchInput: document.getElementById('searchInput'),
+        searchClearBtn: document.getElementById('searchClearBtn'),
+
         // 모달
         categoryModal: document.getElementById('categoryModal'),
         marketModal: document.getElementById('marketModal'),
@@ -374,6 +378,14 @@
             item.classList.toggle('active', item.dataset.tab === 'home');
         });
 
+        // 검색창 초기화
+        if (elements.searchInput) {
+            elements.searchInput.value = '';
+        }
+        if (elements.searchClearBtn) {
+            elements.searchClearBtn.style.display = 'none';
+        }
+
         elements.mainContent.scrollTop = 0;
     }
 
@@ -565,6 +577,74 @@
     }
 
     // ============================================
+    // 텍스트 검색 기능
+    // ============================================
+
+    let searchDebounceTimer = null;
+
+    async function performSearch(query) {
+        if (!query || query.trim().length === 0) {
+            return;
+        }
+
+        showLoading();
+        try {
+            const response = await fetch(`/api/search?q=${encodeURIComponent(query.trim())}`);
+            const data = await response.json();
+            hideLoading();
+
+            const title = `"${query}" 검색 결과 (${data.count}건)`;
+            showSearch(title, data.items);
+        } catch (error) {
+            hideLoading();
+            showSearch('검색 결과', []);
+        }
+    }
+
+    function handleSearchInput(e) {
+        const query = e.target.value;
+
+        // 클리어 버튼 표시/숨김
+        if (elements.searchClearBtn) {
+            elements.searchClearBtn.style.display = query.length > 0 ? 'flex' : 'none';
+        }
+
+        // 디바운스 적용 (300ms)
+        if (searchDebounceTimer) {
+            clearTimeout(searchDebounceTimer);
+        }
+
+        if (query.trim().length >= 1) {
+            searchDebounceTimer = setTimeout(() => {
+                performSearch(query);
+            }, 300);
+        }
+    }
+
+    function handleSearchKeydown(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            if (searchDebounceTimer) {
+                clearTimeout(searchDebounceTimer);
+            }
+            const query = e.target.value;
+            if (query.trim().length >= 1) {
+                performSearch(query);
+            }
+        }
+    }
+
+    function clearSearch() {
+        if (elements.searchInput) {
+            elements.searchInput.value = '';
+            elements.searchInput.focus();
+        }
+        if (elements.searchClearBtn) {
+            elements.searchClearBtn.style.display = 'none';
+        }
+    }
+
+    // ============================================
     // 홈 화면 데이터 로드
     // ============================================
 
@@ -643,6 +723,17 @@
     // ============================================
 
     function initEventListeners() {
+        // 검색 입력 이벤트
+        if (elements.searchInput) {
+            elements.searchInput.addEventListener('input', handleSearchInput);
+            elements.searchInput.addEventListener('keydown', handleSearchKeydown);
+        }
+
+        // 검색 클리어 버튼
+        if (elements.searchClearBtn) {
+            elements.searchClearBtn.addEventListener('click', clearSearch);
+        }
+
         // 뒤로가기 버튼
         addTouchFeedback(elements.backBtn, goBack);
         addTouchFeedback(elements.detailBackBtn, goBack);

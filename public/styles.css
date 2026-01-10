@@ -84,6 +84,66 @@ body {
     padding: 16px;
 }
 
+/* 검색바 */
+.search-bar-container {
+    margin-bottom: 16px;
+}
+
+.search-input-wrapper {
+    display: flex;
+    align-items: center;
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    padding: 0 16px;
+    position: relative;
+    transition: var(--transition);
+    border: 2px solid transparent;
+}
+
+.search-input-wrapper:focus-within {
+    border-color: var(--primary-color);
+    background: var(--card-bg-light);
+}
+
+.search-icon {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.search-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    padding: 14px 12px;
+    font-size: 1rem;
+    color: var(--text-primary);
+    font-family: inherit;
+}
+
+.search-input::placeholder {
+    color: var(--text-muted);
+}
+
+.search-clear-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1.2rem;
+    padding: 4px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.search-clear-btn:active {
+    transform: scale(0.9);
+    color: var(--text-primary);
+}
+
 /* 퀵 카테고리 버튼 */
 .quick-categories {
     display: flex;
